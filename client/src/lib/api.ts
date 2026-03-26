@@ -4,11 +4,17 @@ type RequestOptions = RequestInit & {
   bodyJson?: unknown;
 };
 
+function buildApiUrl(path: string): string {
+  const base = API_BASE_URL.replace(/\/+$/, "");
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  return `${base}${normalizedPath}`;
+}
+
 export async function apiRequest<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { bodyJson, headers, ...rest } = options;
   const token = localStorage.getItem("gatorchef_id_token");
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await fetch(buildApiUrl(path), {
     ...rest,
     headers: {
       "Content-Type": "application/json",
